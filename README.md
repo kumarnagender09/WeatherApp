@@ -45,6 +45,8 @@ The **Weather App** will allow users to:
 <img src="4.png" width="30%"/></a>
 <img src="5.png" width="30%"/></a>
 
+---
+
 ## Project Structure
 
 ### 1. **Model-View-ViewModel (MVVM)**
@@ -112,11 +114,27 @@ The **Weather App** will allow users to:
 ### 1. Fetching Data with Retrofit
 
 ```kotlin
-interface WeatherApiService {
+// Interface for the Weather API endpoints
+interface WeatherApi {
+    // Defines a GET request to the "weather" endpoint
     @GET("weather")
-    suspend fun getWeatherByCity(
-        @Query("q") city: String,
-        @Query("appid") apiKey: String
+    suspend fun getWeather(
+        // API key query parameter, defaulting to the value in BuildConfig
+        @Query("appid") key: String = BuildConfig.API_KEY,
+
+        // City query parameter, defaulting to a constant destination
+        @Query("q") city: String = DEFAULT_WEATHER_DESTINATION,
+    ): WeatherResponse
+
+    // Defines a GET request to the "weather" endpoint
+
+    @GET("weather")
+    suspend fun getWeatherByCoordinates(
+        // API key query parameter, defaulting to the value in BuildConfig
+        @Query("appid") key: String = BuildConfig.API_KEY,
+        // Lat/long query parameter, defaulting to a constant destination
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
     ): WeatherResponse
 }
 ```
@@ -124,34 +142,58 @@ interface WeatherApiService {
 ### 2. ViewModel with Coroutines
 
 ```kotlin
-class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
-    private val _weatherData = MutableLiveData<WeatherData>()
-    val weatherData: LiveData<WeatherData> get() = _weatherData
+@HiltViewModel
+class WeatherViewModel @Inject constructor(
+    private val repository: WeatherRepository
+) : ViewModel() {
 
-    fun fetchWeather(city: String) {
+    private val _uiState: MutableStateFlow<WeatherUiState> =
+        MutableStateFlow(WeatherUiState(isLoading = true))
+    val uiState: StateFlow<WeatherUiState> = _uiState.asStateFlow()
+
+    private val _searchWidgetState: MutableState<SearchWidgetState> =
+        mutableStateOf(value = SearchWidgetState.CLOSED)
+    val searchWidgetState: State<SearchWidgetState> = _searchWidgetState
+
+    private val _searchTextState: MutableState<String> = mutableStateOf(value = "")
+    val searchTextState: State<String> = _searchTextState
+
+    fun updateSearchWidgetState(newValue: SearchWidgetState) {
+        _searchWidgetState.value = newValue
+    }
+
+    fun updateSearchTextState(newValue: String) {
+        _searchTextState.value = newValue
+    }
+
+    init {
+        getWeather()
+    }
+
+    // Fetch weather by city name
+    fun getWeather(city: String = DEFAULT_WEATHER_DESTINATION) {
+        repository.getWeatherForecast(city).map { result ->
+            handleResult(result)
+        }.launchIn(viewModelScope)
+    }
+
+    // Fetch weather by coordinates
+    fun getWeatherByCoordinates(lat: Double, lon: Double) {
         viewModelScope.launch {
-            try {
-                val result = repository.getWeather(city)
-                _weatherData.value = result
-            } catch (e: Exception) {
-                // Handle error
-            }
+            val result = repository.getWeatherByCoordinates(lat, lon)
+            handleResult(result)
+        }
+    }
+
+    // Helper to handle the result and update UI state
+    private fun handleResult(result: Result<WeatherResponse>) {
+        when (result) {
+            is Result.Success -> _uiState.value = WeatherUiState(weatherResponse = result.data)
+            is Result.Error -> _uiState.value = WeatherUiState(errorMessage = result.errorMessage)
+            Result.Loading -> _uiState.value = WeatherUiState(isLoading = true)
         }
     }
 }
-```
+etc....
 
-### 3. Caching Images with Coil
-
-```kotlin
-Image(
-    painter = rememberImagePainter(
-        data = weatherIconUrl,
-        builder = {
-            crossfade(true)
-            placeholder(R.drawable.placeholder)
-        }
-    ),
-    contentDescription = "Weather Icon"
-)
-```
+---
