@@ -5,7 +5,8 @@ The **Weather App** will allow users to:
 2. Display weather details fetched from the [OpenWeatherMap API](https://openweathermap.org/api).
 3. Provide location-based weather updates if location permission is granted.
 4. Auto-load the last searched city's weather on launch.
-
+<img src="1.png" width="40%"/></a>
+<img src="2.png" width="40%"/></a>
 ## Requirements
 
 ### Must-Have Features
@@ -38,11 +39,6 @@ The **Weather App** will allow users to:
 - Use **Mockito** or **Espresso** for UI or integration tests if time permits.
 
 ---
-
-## 📱 Screenshots
-<img src="1.png" width="40%"/></a>
-<img src="2.png" width="40%"/></a>
-<img src="3.png" width="40%"/></a>
 <img src="4.png" width="40%"/></a>
 <img src="5.png" width="40%"/></a>
 
