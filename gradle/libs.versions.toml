@@ -23,6 +23,7 @@ core-testing = "2.2.0"
 kotlinx-coroutines-test = "1.7.3"
 mockk = "1.13.8"
 turbine = "1.0.0"
+play-services-location = "21.3.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -55,6 +56,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "core-testing" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "play-services-location" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }

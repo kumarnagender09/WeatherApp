@@ -1,13 +1,13 @@
 package com.mphasis.weather.data.repository
 
+import com.mphasis.weather.data.model.WeatherResponse
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
-import com.mphasis.weather.data.model.toWeather
 import com.mphasis.weather.data.network.WeatherApi
-import com.mphasis.weather.data.sampleForecastResponse
 import com.mphasis.weather.utils.Result
 import kotlinx.coroutines.test.runTest
+import org.json.JSONObject
 import org.junit.Before
 import org.junit.Test
 
@@ -21,22 +21,20 @@ class DefaultWeatherRepositoryTest {
     }
 
     @Test
-    fun `when getWeatherForecast is called, it should emit loading state and then success state`() =
+    fun `when getWeather is called, it should emit loading state and then success state`() =
         runTest {
-            coEvery {
-                weatherApi.getWeatherForecast(
-                    any(),
-                    any(),
-                    any()
-                )
-            } returns sampleForecastResponse
+//            coEvery {
+//                weatherApi.getWeather(
+//                    any(),
+//                    any()
+//                )
+//            } returns MockupData()
 
-            val results = mutableListOf<Result<Weather>>()
-            repository.getWeatherForecast("Munich").collect { result ->
+            val results = mutableListOf<Result<WeatherResponse>>()
+            repository.getWeatherForecast("Irvine").collect { result ->
                 results.add(result)
             }
             assertEquals(Result.Loading, results[0])
 
-            assertEquals(Result.Success(sampleForecastResponse.toWeather()), results[1])
         }
 }

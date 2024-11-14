@@ -13,6 +13,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
+    // Provides a singleton instance of WeatherRepository.
     @Singleton
     @Provides
     fun provideRepository(weatherApi: WeatherApi): WeatherRepository =
