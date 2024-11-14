@@ -39,6 +39,13 @@ The **Weather App** will allow users to:
 
 ---
 
+## 📱 Screenshots
+<img src="1.png" width="40%"/></a>
+<img src="2.png" width="40%"/></a>
+<img src="3.png" width="40%"/></a>
+<img src="4.png" width="40%"/></a>
+<img src="5.png" width="40%"/></a>
+
 ## Project Structure
 
 ### 1. **Model-View-ViewModel (MVVM)**
